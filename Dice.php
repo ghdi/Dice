@@ -31,10 +31,10 @@ class Dice {
 	 * @param string $name The name of the class to add the rule for
 	 * @param array $rule The container can be fully configured using rules provided by associative arrays. See {@link https://r.je/dice.html#example3} for a description of the rules.
 	 */
-	public function addRule(string $name, array $rule): self {
-		$dice = clone $this;
-		$this->addRuleTo($dice, $name, $rule);
-		return $dice;
+	public function addRule(string $name, array $rule) {
+		#$dice = clone $this;
+		$this->addRuleTo($this, $name, $rule);
+		#return $dice;
 	 }
 
 	/**
@@ -213,7 +213,8 @@ class Dice {
 		// Cache some information about the parameter in $paramInfo so (slow) reflection isn't needed every time
 		$paramInfo = [];
 		foreach ($method->getParameters() as $param) {
-			$class = $param->getClass() ? $param->getClass()->name : null;
+		    # See https://github.com/Level-2/Dice/issues/192
+            $class = $param->getType() && !$param->getType()->isBuiltin() && $param->getType() instanceof \ReflectionNamedType ? $param->getType()->getName() : null;
 			$paramInfo[] = [$class, $param, isset($rule['substitutions']) && array_key_exists($class, $rule['substitutions'])];
 		}
 
